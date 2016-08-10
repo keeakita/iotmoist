@@ -5,11 +5,18 @@ const
     GPIO_DIR = "/sys/class/gpio/"
 
     # Input pins
-    RED_LED   = "24"
-    BLUE_LED  = "23"
+    RED_LED   = "10"
+    BLUE_LED  = "9"
 
     # Ouput pins
-    USB_POWER = "27"
+    USB_POWER = "15"
+
+    # Polling interval for setting the pin, in milliseconds
+    TIMEOUT = 1000
+
+var
+  prev_power = false
+  power_on = false
 
 # Prints an error message and terminates
 proc die(why: string) =
@@ -65,6 +72,20 @@ proc setup() =
     if not setup_output(USB_POWER):
         die("Could not set up usb power out")
 
+# A timer loop that actually controls the humidifier. Used to prevent a
+# malicious client from rapidly toggling the state and damaging hardware.
+proc runTimer(){.async.} =
+  while true:
+
+    if power_on != prev_power:
+      echo("Changed state: " & $power_on)
+      let pwr_str = if power_on: "1" else: "0"
+      discard file_write(pwr_str, GPIO_DIR & "gpio" & USB_POWER & "/value")
+      prev_power = power_on
+
+    # Limit how often the check runs
+    await sleepAsync(TIMEOUT)
+
 routes:
     get "/":
         resp h1("Moist: IoT Humidifier is ready")
@@ -85,13 +106,9 @@ routes:
         let pwr_set = $command["power"].getStr()
         if not isNil(pwr_set):
             if pwr_set == "1" or pwr_set == "0":
-                if file_write(pwr_set, GPIO_DIR & "gpio" & USB_POWER & "/value"):
-                    resp(content="Power value set.",
-                         contentType="text/plain")
-                else:
-                    resp(code=Http500,
-                         content="Could not set power value",
-                         contentType="text/plain")
+                power_on = (pwr_set == "1")
+                resp(content="Power value set.",
+                     contentType="text/plain")
             else:
                 resp(code=Http400,
                      content="Invalid power value (must be 1 or 0)",
@@ -103,4 +120,5 @@ routes:
 
 # Start running here
 setup()
+discard runTimer()
 runForever()
