@@ -20,12 +20,17 @@ Install nimble using your package manager, then:
 nimble install jester
 ```
 
-The server can be run with:
+To run the server securely, as a non-root user:
 
 ```
 nim c moist.nim
-sudo ./moist.nim
+sudo chown root:root moist
+sudo chmod 711 moist
+sudo chmod u+s moist
+./moist
 ```
+
+Note that the server will bail if run directly as root for security reasons.
 
 To create a release build, run:
 

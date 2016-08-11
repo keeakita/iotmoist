@@ -1,4 +1,4 @@
-import jester, asyncdispatch, htmlgen, streams, json, os
+import jester, asyncdispatch, htmlgen, streams, json, os, posix
 
 const
     # GPIO directory
@@ -71,6 +71,13 @@ proc setup() =
     # Output
     if not setup_output(USB_POWER):
         die("Could not set up usb power out")
+
+    # Surrender root privileges
+    if setegid(getgid()) == -1 or getegid() == Gid(0):
+      echo("Failed to surrender root group! Backing out for security!")
+
+    if seteuid(getuid()) == -1 or geteuid() == Uid(0):
+      echo("Failed to surrender root user! Backing out for security!")
 
 # A timer loop that actually controls the humidifier. Used to prevent a
 # malicious client from rapidly toggling the state and damaging hardware.
