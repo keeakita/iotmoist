@@ -99,11 +99,16 @@ routes:
 
     get "/humidifier":
 
+        let
+            red_led = cat(GPIO_DIR & "gpio" & RED_LED & "/value") == "1"
+            blue_led = cat(GPIO_DIR & "gpio" & BLUE_LED & "/value") == "1"
+            has_power = cat(GPIO_DIR & "gpio" & USB_POWER & "/value") == "1"
+
         let json = %*
             {
-                "red_led": cat(GPIO_DIR & "gpio" & RED_LED & "/value"),
-                "blue_led": cat(GPIO_DIR & "gpio" & BLUE_LED & "/value"),
-                "has_power": cat(GPIO_DIR & "gpio" & USB_POWER & "/value")
+                "red_led": red_led,
+                "blue_led": blue_led,
+                "has_power": has_power
             }
 
         resp(json.pretty(), contentType = "application/json")
@@ -111,10 +116,10 @@ routes:
     post "/humidifier":
         var command = parseJson(request.body)
 
-        let pwr_set = $command["power"].getStr()
-        if not isNil(pwr_set):
-            if pwr_set == "1" or pwr_set == "0":
-                power_on = (pwr_set == "1")
+        if command.has_key("power"):
+            let pwr_set = command["power"].getBVal()
+            if pwr_set == true or pwr_set == false:
+                power_on = pwr_set
                 resp(content="Power value set.",
                      contentType="text/plain")
             else:
