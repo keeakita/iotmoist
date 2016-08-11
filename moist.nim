@@ -102,7 +102,8 @@ routes:
         let json = %*
             {
                 "red_led": cat(GPIO_DIR & "gpio" & RED_LED & "/value"),
-                "blue_led": cat(GPIO_DIR & "gpio" & BLUE_LED & "/value")
+                "blue_led": cat(GPIO_DIR & "gpio" & BLUE_LED & "/value"),
+                "has_power": cat(GPIO_DIR & "gpio" & USB_POWER & "/value")
             }
 
         resp(json.pretty(), contentType = "application/json")
