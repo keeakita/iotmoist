@@ -12,4 +12,11 @@
 
 #button {
     cursor: pointer;
+    transform: translateY(0.em);
+    transition: all 0.5s;
+}
+
+#button.depressed {
+    transform: translateY(0.25em);
+    transition: all 0.5s;
 }

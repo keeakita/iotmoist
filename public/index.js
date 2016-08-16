@@ -33,9 +33,17 @@ $(function() {
         setButtonState(!buttonDepressed);
 
         // TODO: Error handling
-        return $.post('/humidifier', JSON.stringify({
+        $.post('/humidifier', JSON.stringify({
             "power": buttonDepressed
         })).done();
+
+        // Prediction: the LED will be blue if depressed or white otherwise.
+        // Guess at the LED state for a more fluid UX.
+        if (buttonDepressed) {
+            $('#button-led').css("fill", "#7af");
+        } else {
+            $('#button-led').css("fill", "white");
+        }
     }
 
     $('#button').on('click',  buttonClicked);
