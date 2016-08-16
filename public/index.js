@@ -1,8 +1,8 @@
 $(function() {
     "use strict";
 
-    window.setInterval(function() {
-        $.getJSON('/humidifier').done(function(json) {
+    function updateLED() {
+        return $.getJSON('/humidifier').done(function(json) {
             if (json.red_led) {
                 $('#button-led').css("fill", "#e55");
             } else if (json.blue_led) {
@@ -13,7 +13,14 @@ $(function() {
         }).fail(function() {
             // TODO: Something
         });
+    }
+
+    // Set a timer to update the LED periodically
+    // TODO: Maybe use long polling or web sockets instead?
+    window.setInterval(function() {
+        updateLED();
     }, 1500);
 
-
+    // Update the LEDs right now, on page load
+    updateLED();
 });
