@@ -1,6 +1,8 @@
 $(function() {
     "use strict";
 
+    var buttonDepressed = false;
+
     function updateLED() {
         return $.getJSON('/humidifier').done(function(json) {
             if (json.red_led) {
@@ -10,16 +12,37 @@ $(function() {
             } else {
                 $('#button-led').css("fill", "white");
             }
+
+            setButtonState(json.has_power);
         }).fail(function() {
             // TODO: Something
         });
     }
 
+    function setButtonState(newState) {
+        buttonDepressed = newState;
+
+        if (newState) {
+            $('#button').addClass('depressed');
+        } else {
+            $('#button').removeClass('depressed');
+        }
+    }
+
+    function buttonClicked() {
+        setButtonState(!buttonDepressed);
+
+        // TODO: Error handling
+        return $.post('/humidifier', JSON.stringify({
+            "power": buttonDepressed
+        })).done();
+    }
+
+    $('#button').on('click',  buttonClicked);
+
     // Set a timer to update the LED periodically
     // TODO: Maybe use long polling or web sockets instead?
-    window.setInterval(function() {
-        updateLED();
-    }, 1500);
+    window.setInterval(updateLED, 1500);
 
     // Update the LEDs right now, on page load
     updateLED();

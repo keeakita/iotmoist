@@ -12,7 +12,7 @@
 <g transform="translate(-148.07 -325.19)">
 <g transform="matrix(.88922 -.45748 .45748 .88922 -145.18 176.1)">
 <g transform="matrix(.99952 .031002 -.031002 .99952 33.307 -9.1476)">
-<rect style="stroke:#000;stroke-width:.74844;fill:#fff" height="12.373" width="41.668" y="339.07" x="255.44"/>
+<rect id="button" style="stroke:#000;stroke-width:.74844;fill:#fff" height="12.373" width="41.668" y="339.07" x="255.44"/>
 <rect id="button-led" style="opacity:0.818;stroke:#000;stroke-width:.61387;fill:none" height="21.599" width="57.965" y="351.12" x="247.29"/>
 </g>
 </g>

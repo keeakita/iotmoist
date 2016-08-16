@@ -9,3 +9,7 @@
 #button-led.blue {
     fill: #4444ff !important;
 }
+
+#button {
+    cursor: pointer;
+}

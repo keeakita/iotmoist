@@ -113,11 +113,12 @@
          transform="matrix(0.99951931,0.0310024,-0.0310024,0.99951931,33.307252,-9.147648)">
         <rect
            style="fill:#ffffff;stroke:#000000;stroke-width:0.74843585;stroke-opacity:1"
-           id="rect3361"
+           id="button"
            width="41.667816"
            height="12.373395"
            x="255.44283"
-           y="339.06873" />
+           y="339.06873"
+           inkscape:label="#rect3361" />
         <rect
            style="opacity:0.81800022;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.61386567;stroke-opacity:1"
            id="button-led"
