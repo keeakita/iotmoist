@@ -1,0 +1,11 @@
+.humidifier {
+    margin-top: 5em;
+}
+
+#button-led.red {
+    fill: #ff4444 !important;
+}
+
+#button-led.blue {
+    fill: #4444ff !important;
+}

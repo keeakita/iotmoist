@@ -20,6 +20,13 @@ Install nimble using your package manager, then:
 nimble install jester
 ```
 
+Next, install the `haml` Ruby gem and build the page:
+
+```
+gem install haml
+make
+```
+
 To run the server securely, as a non-root user:
 
 ```
