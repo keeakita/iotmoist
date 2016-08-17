@@ -72,4 +72,23 @@ $(function() {
 
     // Update the LEDs right now, on page load
     updateLED();
+
+    // Start a tour if this is the user's first visit
+    var tour = new Tour({
+        steps: [{
+            element: '#button-led',
+            title: 'LED Indicator',
+            content: "Blue means the humidifier is on. Red means it needs the filter changed. White means it's off.",
+            placement: 'auto left'
+        },
+        {
+            element: '#button',
+            title: 'Power Button',
+            content: 'This turns the power off and on.',
+            placement: 'auto top'
+        }]
+    });
+
+    tour.init();
+    tour.start();
 });
