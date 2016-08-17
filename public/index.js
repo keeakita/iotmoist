@@ -2,6 +2,7 @@ $(function() {
     "use strict";
 
     var buttonDepressed = false;
+    var updateTimer = undefined;
 
     function updateLED() {
         return $.getJSON('/humidifier').done(function(json) {
@@ -19,6 +20,13 @@ $(function() {
         });
     }
 
+    function startUpdateTimer() {
+        if (updateTimer !== undefined) {
+            window.clearInterval(updateTimer);
+        }
+        updateTimer = window.setInterval(updateLED, 1500);
+    }
+
     function setButtonState(newState) {
         buttonDepressed = newState;
 
@@ -32,10 +40,20 @@ $(function() {
     function buttonClicked() {
         setButtonState(!buttonDepressed);
 
+        // Stop the update timer and only update it after the POST to prevent
+        // "bouncing" of the button.
+        if (updateTimer !== undefined) {
+            clearInterval(updateTimer);
+            updateTimer = undefined;
+        }
+
         // TODO: Error handling
         $.post('/humidifier', JSON.stringify({
             "power": buttonDepressed
-        })).done();
+        })).done(function() {
+            // Restart the timer
+            startUpdateTimer();
+        });
 
         // Prediction: the LED will be blue if depressed or white otherwise.
         // Guess at the LED state for a more fluid UX.
@@ -50,7 +68,7 @@ $(function() {
 
     // Set a timer to update the LED periodically
     // TODO: Maybe use long polling or web sockets instead?
-    window.setInterval(updateLED, 1500);
+    startUpdateTimer();
 
     // Update the LEDs right now, on page load
     updateLED();
