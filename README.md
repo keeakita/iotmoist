@@ -1,7 +1,7 @@
 # IoT Moist
 
-The server software for an Internet of Things Humidifier written in Nim with
-Jester.
+The server software for an Internet of Things Humidifier written in Ruby with
+Sinatra.
 
 ## What
 
@@ -11,50 +11,37 @@ component.
 
 ## Compiling & Running
 
-IMPORTANT: Edit `moist.nim` and define the proper pins. If you mess this up
-something could get damaged!
+IMPORTANT: Edit `moist.rb` and `setup.sh` and define the proper pins. If you
+mess this up something could get damaged!
 
-Install nimble using your package manager, then:
-
-```
-nimble install jester
-```
-
-Next, install the `haml` Ruby gem and build the page:
+Install Ruby 2.3.1, then:
 
 ```
-gem install haml
+bundle install
 make
 ```
 
-To run the server securely, as a non-root user:
+Create a `gpio` group on the server, then add your current user to it. Set up
+all the pins (needs to be done every reboot):
 
 ```
-nim c moist.nim
-sudo chown root:root moist
-sudo chmod 711 moist
-sudo chmod u+s moist
-./moist
+sudo ./setup.sh
 ```
 
-Note that the server will bail if run directly as root for security reasons.
-
-To create a release build, run:
+Finally, run the server:
 
 ```
-nim c -d:release moist.nim
+ruby moist.rb
 ```
-
-Be aware that release builds can take a while on the Pi.
 
 ## API
 
 `GET /`:  
-Get a welcome message
+Shows a user-friendly webpage
 
 `GET /humidifier`:  
 Get the status of the LEDs as JSON
 
 `POST /humidifier`:  
 Turn the humidifier on or off. Takes a JSON object in the body with `"power"`
-set to `"1"` or `"0"`.
+set to `true` or `false`.
