@@ -24,6 +24,10 @@ echo 'in' > "$GPIO_DIR"/gpio"$RED_LED"/direction
 echo 'in' > "$GPIO_DIR"/gpio"$BLUE_LED"/direction
 echo 'out' > "$GPIO_DIR"/gpio"$USB_POWER"/direction
 
+# Make ouput pins generate interrupts on state change
+echo 'both' > "$GPIO_DIR"/gpio"$RED_LED"/edge
+echo 'both' > "$GPIO_DIR"/gpio"$BLUE_LED"/edge
+
 # Set initial value
 echo '0' > "$GPIO_DIR"/gpio"$USB_POWER"/value
 

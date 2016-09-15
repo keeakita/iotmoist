@@ -19,10 +19,6 @@ configure do
   set bind: '0.0.0.0'
 end
 
-prev_power = false
-power_on = false
-status_mutex = Mutex.new
-
 # Prints an error message and terminates
 def die(why)
   puts why
@@ -42,12 +38,21 @@ def cat(where)
   return File.read(where)
 end
 
+# Set up some initial states
+prev_power = cat("#{GPIO_DIR}gpio#{USB_POWER}/value") == "1"
+red_led_value = cat("#{GPIO_DIR}gpio#{RED_LED}/value") == "1"
+blue_led_value = cat("#{GPIO_DIR}gpio#{BLUE_LED}/value") == "1"
+
+power_on = prev_power
+power_mutex = Mutex.new
+led_mutex = Mutex.new
+
 # A timer loop that actually controls the humidifier. Used to prevent a
 # malicious client from rapidly toggling the state and damaging hardware.
 Thread.abort_on_exception = true
 Thread.new do
   loop do
-    status_mutex.synchronize do
+    power_mutex.synchronize do
       if power_on != prev_power
         puts "Changed state: #{power_on}"
         pwr_str = power_on ? "1" : "0"
@@ -61,20 +66,43 @@ Thread.new do
   end
 end
 
+# A thread for monitoring changes to the LEDs
+Thread.new do
+  red_file = File.open("#{GPIO_DIR}gpio#{RED_LED}/value", 'r')
+  blue_file = File.open("#{GPIO_DIR}gpio#{BLUE_LED}/value", 'r')
+  loop do
+    _,_,updated = IO.select(nil, nil, [red_file, blue_file])
+    led_mutex.synchronize do
+      if (updated == red_file)
+        red_led_value = (red_file.read(1) == '1')
+        red_file.rewind()
+      else
+        blue_led_value = (blue_file.read(1) == '1')
+        blue_file.rewind()
+      end
+    end
+  end
+end
+
 # Sinatra Routes start here
 get '/' do
   send_file 'public/index.html'
 end
 
 get '/humidifier' do
+  json_str = ""
 
-  json = {
-    red_led: cat("#{GPIO_DIR}gpio#{RED_LED}/value") == "1",
-    blue_led: cat("#{GPIO_DIR}gpio#{BLUE_LED}/value") == "1",
-    has_power: cat("#{GPIO_DIR}gpio#{USB_POWER}/value") == "1"
-  }
+  led_mutex.synchronize do
+    power_mutex.synchronize do
+      json_str = {
+        red_led: red_led_value,
+        blue_led: blue_led_value,
+        has_power: power_on
+      }.to_s
+    end
+  end
 
-  [200, json.to_s]
+  [200, json_str]
 end
 
 post '/humidifier' do
@@ -82,7 +110,7 @@ post '/humidifier' do
   response = 500
 
   if not command['power'].nil?
-    status_mutex.synchronize do
+    power_mutex.synchronize do
       pwr_set = command['power']
       if pwr_set == true or pwr_set == false
         power_on = pwr_set
