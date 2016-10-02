@@ -1,5 +1,3 @@
-nimcache/
-moist
 *.swp
-public/index.html
-ca/
+webserver/public/index.html
+settings.yml

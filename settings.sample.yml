@@ -1,0 +1,11 @@
+---
+mq:
+    host:        web.oslers.us
+    tls:         true
+    port:        5671
+    verify_peer: true
+    heartbeat:   10
+    vhost:       moist
+    user:        moist_server
+    #password:    'hunter2'
+...
