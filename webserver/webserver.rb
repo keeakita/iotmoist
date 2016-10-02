@@ -9,13 +9,6 @@ require 'pry'
 require 'sinatra'
 require_relative '../lib/message_queue.rb'
 
-# Enable testing from the local network
-configure do
-  set port: 5678
-  set bind: '0.0.0.0'
-  disable :logging
-end
-
 # Die if any thread does (Rack should restart the worker)
 Thread.abort_on_exception = true
 
