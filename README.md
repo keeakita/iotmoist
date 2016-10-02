@@ -17,7 +17,7 @@ two parts communicate via messages passed over RabbitMQ.
 
 ### Preliminary
 
-This project relies on having and AMPQ server set up. I'm using
+This project relies on having an AMPQ server set up. I'm using
 [https://www.rabbitmq.com/](RabbitMQ) personally. Copy `settings.sample.yml` to
 `settings.yml` and edit it to contain the details of your AMPQ server. The
 project needs to be able to declare and access the exchanges:
