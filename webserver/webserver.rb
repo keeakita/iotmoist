@@ -5,7 +5,6 @@
 # message queue.
 
 require 'json'
-require 'pry'
 require 'sinatra'
 require_relative '../lib/message_queue.rb'
 

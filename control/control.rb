@@ -5,8 +5,6 @@
 
 require_relative '../lib/message_queue.rb'
 
-require 'pry'
-
 # GPIO directory
 GPIO_DIR = '/sys/class/gpio/'
 
