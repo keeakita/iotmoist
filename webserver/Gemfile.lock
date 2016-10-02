@@ -1,6 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    amq-protocol (2.0.1)
+    bunny (2.5.1)
+      amq-protocol (>= 2.0.1)
     haml (4.0.7)
       tilt
     rack (1.6.4)
@@ -16,6 +19,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bunny
   haml
   sinatra
 
